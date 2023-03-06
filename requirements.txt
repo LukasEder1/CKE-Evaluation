@@ -1,0 +1,17 @@
+sumy
+numpy
+scipy
+spacy
+scikit-learn
+nltk
+pandas
+streamlit
+sentence-transformers
+cdifflib
+torch
+yake
+summa
+keybert
+git+https://github.com/boudinfl/pke.git
+st-annotated-text
+pysbd
