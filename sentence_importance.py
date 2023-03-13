@@ -353,7 +353,7 @@ def contrastive_importance(former, later):
 
     # Concat the two document versions
     combined = text_rank_importance([former + "\n" + later])[0]
-    print(len(combined))
+   
     # reverse the values
     combined = {k: 1/v for k, v in combined.items()}
     
@@ -363,7 +363,7 @@ def contrastive_importance(former, later):
     combined = {k: float(v/total) for k, v in sorted(combined.items(), key=lambda item: item[1], 
                                                  reverse=True)}
 
-    print(len(combined))
+    
     # Sentence Boundary Detector (Improved Sentence Tokenization)
     # possible alternative would be nltk.sent_tokenize                                    
     seg = pysbd.Segmenter(language="en", clean=False)
