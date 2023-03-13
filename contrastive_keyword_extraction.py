@@ -43,12 +43,12 @@ def final_score(documents, changed_indices, new_indices, matched_dict, ranking, 
             # Calculate the Importance of the change that led to new sentence
             # Hypothesis 1: Importance of previous Sentence times semantic similarity
             # of changed and matched sentence
-            
+            I_ci = I_sprev[i] * score
 
             # Retrieve the Importance of the matched sentence
             I_si = I_s[int(matched_idx)] 
             
-            I_ci = I_sprev[i] * score             # Combine the two scores using a combinator
+            # Combine the two scores using a combinator
             s_c = combinator(I_ci, I_si, alpha_gamma)
 
             current_adds = additions[i].get(int(matched_idx), [])
@@ -60,9 +60,9 @@ def final_score(documents, changed_indices, new_indices, matched_dict, ranking, 
                 # fe ... frequency of ngram in earlier version
                 # fl ... frequency of ngram in latter version
                 ratio = float(doc_level_stats[1].get(ngram, 0)) / float(doc_level_stats[0].get(ngram, 1))
-
+                
                 # include added ngrams, scored by their frequency * score of the change 
-                keywords[ngram] = keywords.get(ngram, 0) + float(ratio * np.log(freq) * s_c)
+                keywords[ngram] = keywords.get(ngram, 0) + float(ratio * np.log(freq + 0.001) * s_c)
                 
         # get frequencies of sentence in older version
         # in order to include deletions as keywords
@@ -78,11 +78,12 @@ def final_score(documents, changed_indices, new_indices, matched_dict, ranking, 
             ratio = doc_level_stats[0].get(ngram, 0) / doc_level_stats[1].get(ngram, 1)
             
             # include deleted ngrams, scored by their frequency * score of the change
-            keywords[ngram] = keywords.get(ngram, 0) + float(ratio * np.log(freq) * s_c)
+            keywords[ngram] = keywords.get(ngram, 0) + float(ratio * np.log(freq + 0.001)  * s_c)
 
-
+    print(len(former_contrastiveness))
+    print(len(sentences_a))
     # newly added sentence: ( new := has not been matched to)
-    for i in new_indices:
+    for i in set(new_indices):
         
         # Compute the Dictonary of frequency for all ngrams up to "max_ngram" in new sentence
         current_freqs = utilities.build_sentence_freqs_max_ngram(sentences_b[i], 
@@ -96,6 +97,7 @@ def final_score(documents, changed_indices, new_indices, matched_dict, ranking, 
             ratio = float(doc_level_stats[1].get(ngram, 1)) / float(doc_level_stats[0].get(ngram, 1))
             
             # include added ngrams, scored by their frequency * Importance of the sentence
+            print(i)
             keywords[ngram] = keywords.get(ngram, 0) + float(freq * latter_contrastiveness[i] * ratio)
             
     
@@ -121,7 +123,7 @@ def final_score(documents, changed_indices, new_indices, matched_dict, ranking, 
     total_count = sum(keywords.values())
     
     # sort keywords + normalize
-    keywords = {k: float(v)/float(total_count+ 0.001)  for k, v in sorted(keywords.items(), key=lambda item: item[1], 
+    keywords = {k: float(v)/float(total_count)  for k, v in sorted(keywords.items(), key=lambda item: item[1], 
                                                  reverse=True)}
     
     return keywords
