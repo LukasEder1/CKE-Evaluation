@@ -80,8 +80,6 @@ def final_score(documents, changed_indices, new_indices, matched_dict, ranking, 
             # include deleted ngrams, scored by their frequency * score of the change
             keywords[ngram] = keywords.get(ngram, 0) + float(ratio * np.log(freq + 0.001)  * s_c)
 
-    print(len(former_contrastiveness))
-    print(len(sentences_a))
     # newly added sentence: ( new := has not been matched to)
     for i in set(new_indices):
         
@@ -97,7 +95,6 @@ def final_score(documents, changed_indices, new_indices, matched_dict, ranking, 
             ratio = float(doc_level_stats[1].get(ngram, 1)) / float(doc_level_stats[0].get(ngram, 1))
             
             # include added ngrams, scored by their frequency * Importance of the sentence
-            print(i)
             keywords[ngram] = keywords.get(ngram, 0) + float(freq * latter_contrastiveness[i] * ratio)
             
     
