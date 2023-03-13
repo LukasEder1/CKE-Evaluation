@@ -5,7 +5,10 @@ from collections import Counter
 import itertools
 import re
 
+def ngram_in_stopwords(ngram, stopwords):
+    words = nltk.word_tokenize(ngram.lower())
 
+    return any(word in stopwords for word in words)
 
 def get_ngrams_of_size_n(diff_content, ngram_size):
     return [ngram for ngram in diff_content if len(ngram.split(" ")) == ngram_size]
